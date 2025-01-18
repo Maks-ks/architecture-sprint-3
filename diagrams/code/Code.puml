@@ -1,0 +1,85 @@
+@startuml
+title SmartHome system ER diagram
+
+top to bottom direction
+
+!include ..\templates\C4_Component.puml
+
+class User {
+  +Int id
+  +String name
+  +String email
+  +List<House> houses
+  +void register()
+  +void login()
+  +void addHouse()
+}
+
+class House {
+  +Int id
+  +Int user_id
+  +Address address
+  +List<Device> devices
+  +void addAddress()
+  +void registerDevice()
+  +void unregisterDevice()
+  +void viewDevicesInfo()
+}
+
+class Device {
+  +Int id
+  +Int type_id
+  +Int house_id
+  +String name
+  +String serial_number
+  +String status
+  +List<TelemetryData> telemetry
+  +void changeStatus() 
+  +void changeState() 
+  +void addTelemetry()
+}
+
+class DeviceType {
+  +Int id
+  +String name
+}
+
+class Module {
+  +Int id
+  +String name
+  +String configuration
+}
+
+class DeviceModule {
+  +Int id
+  +Int device_id
+  +Int module_id
+  +void createDeviceModule()
+}
+
+class Address {
+  +Int id
+  +String country
+  +String region
+  +String city
+  +String home_number 
+  +String flat_number
+  +void create()
+}
+
+class TelemetryData {
+  +Int id
+  +Int device_id
+  +String name
+  +String value
+}
+
+User "1" -- "0..*" House : has
+House "1" -- "0..1" Address : has
+Device "1..*" -- "1" DeviceType : has
+Device "1" -- "1..*" DeviceModule
+DeviceModule "1..*" -- "1" Module
+Device "1" -- "0..*" TelemetryData : has
+House "1" -- "0..*" Device : has
+
+@enduml

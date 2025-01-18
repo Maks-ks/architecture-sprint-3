@@ -1,0 +1,15 @@
+@startuml
+title SmartHome Context Diagram
+
+top to bottom direction
+
+!include ..\templates\C4_Component.puml
+
+Person(user, "User", "A user of SmartHome system")
+System(SmartHomeSystem, "SmartHome System", "Heating system management")
+
+System_Ext(sensors, "Temperature sensors", "External home sensors for heating management and data integration")
+
+Rel(user, SmartHomeSystem, "Manage heating system, view current temperature")
+Rel(SmartHomeSystem,sensors,"Send commands,\n fetches data")
+@enduml

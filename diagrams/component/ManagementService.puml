@@ -1,0 +1,25 @@
+@startuml
+title ManagementService Component Diagram
+
+top to bottom direction
+
+!include ..\templates\C4_Component.puml
+
+Container_Boundary(SmartHomeSystem, "SmartHome System") {
+  Container(ManagementService, "ManagementService", "Python, Flask")
+  Container(Database1, "Database", "PostgreSQL", "Stores state data")
+  Container(Database2, "Database", "PostgreSQL", "Stores commands/settings data")
+}
+
+Container(ManagementService, "UserService", "Python, Flask") {
+  Component(QueriesAPI, "QueriesAPI", "Handles queries")
+  Component(CommandsAPI, "CommandsAPI", "Handles commands")
+  Component(StateManager, "StateManager")
+  Component(CommandProcessor, "CommandProcessor")
+}
+
+Rel(QueriesAPI,StateManager,"Queries")
+Rel(CommandsAPI,CommandProcessor,"Commands")
+Rel(StateManager,Database1,"Reads data")
+Rel(CommandProcessor,Database2,"Writes data")
+@enduml

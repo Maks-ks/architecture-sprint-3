@@ -1,0 +1,58 @@
+@startuml
+title SmartHome Container Diagram
+
+top to bottom direction
+
+!include ..\templates\C4_Component.puml
+
+Container(Services, "Smart services", "Python, Flask") {
+  Component(HeatingService, "HeatingService", "Manage heating system, send telemetry data")
+  Component(LightingService, "LightingService", "Manage lighting system, send telemetry data")
+  Component(GateService, "GateService", "Gate management, send telemetry data")
+  Component(VideoMonitoringService, "VideoMonitoringService", "Video monitoring management, send telemetry data")
+}
+
+Container_Boundary(Broker, "Message Broker") {
+  Container(Kafka, "Kafka", "Broker for handling messages")
+}
+
+Container(Telemetry, "Telemetry processing", "Python, Flask") {
+  Component(TelemetryService, "TelemetryService", "Process telemetry data")
+  Component(EventStore, "EventStore", "Store events")
+}
+
+Container(UserInteraction, "User interaction") {
+  Component(ApiGateway, "ApiGateway", "Handles API requests")
+  Component(WebApp, "WebApp", "Web app for users")
+  Component(MobileApp, "MobileApp", "Mobile app for users")
+}
+
+Container(SmartHomeManagement, "Smart home management", "Python, Flask") {
+  Component(ManagementService, "ManagementService", "Manage users and their smart homes")
+}
+
+Person(User, "User")
+
+
+Rel(HeatingService, Kafka, "Publish telemetry")
+Rel(Kafka, HeatingService, "Retrieve commands")
+Rel(LightingService, Kafka, "Publish telemetry")
+Rel(Kafka, LightingService, "Retrieve commands")
+Rel(GateService, Kafka, "Publish telemetry")
+Rel(Kafka, GateService, "Retrieve commands")
+Rel(VideoMonitoringService, Kafka, "Send telemetry")
+Rel(Kafka, VideoMonitoringService, "Send commands")
+
+Rel(TelemetryService, EventStore, "Save events")
+Rel(Kafka, TelemetryService, "Retrieve telemetry data")
+Rel(TelemetryService, Kafka, "Publish processed data")
+
+Rel(ApiGateway, WebApp, "Display smart home data")
+Rel(ApiGateway, MobileApp, "Display smart home data")
+Rel(User, ApiGateway, "Request smart home data,Send commands to smart home")
+Rel(ApiGateway, ManagementService, "Request info, send commands")
+Rel(ManagementService, ApiGateway, "Return smart home data")
+Rel(ManagementService, Kafka, "Request smart home data,Send commands to smart home")
+Rel(Kafka, ManagementService, "Retrieve user smart home info")
+
+@enduml
